@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VendCo - Your Vending Solution</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .phone-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4CAF50;
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 5px;
+        }
+        .phone-number:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0;
+            flex-wrap: wrap;
+        }
+        nav ul li {
+            margin-right: 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            background-color: rgb(0, 0, 0);
+        }
+        nav ul li a:hover {
+            background-color: #4CAF50;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        .content {
+            flex: 2;
+            padding-right: 20px;
+        }
+        .vending-machine {
+            flex: 1;
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .service-box {
+            background: #f4f4f4;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .service-box h3 {
+            margin-top: 0;
+        }
+        #contact-form {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        #contact-form input[type="text"],
+        #contact-form input[type="email"],
+        #contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #contact-form button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+        #contact-form button:hover {
+            background: #45a049;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+        }
+        #vending-svg {
+            width: 100%;
+            height: auto;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+        }
+        .snack-slot, .drink-slot, .chip-slot {
+            cursor: pointer;
+        }
+        .snack-slot:hover, .drink-slot:hover, .chip-slot:hover {
+            opacity: 0.8;
+        }
+        .grid-line {
+            stroke: #888888;
+            stroke-width: 1;
+        }
+        #preset-selector {
+            margin-bottom: 10px;
+            padding: 5px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .services-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .services-text {
+            flex: 1;
+        }
+        .machine-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4CAF50;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-family: 'Arial Black', Gadget, sans-serif;
+            letter-spacing: 1px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .logo span {
+            color: white;
+        }
+        .service-area {
+            color: #4ECDC4;
+            font-size: 0.9em;
+            margin: 2px;
+            text-align: center;
+        }
+        .section-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px 5px 0 0;
+        }
+        .section-content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .highlight-box {
+            border-left: 4px solid #4CAF50;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        @media (min-width: 768px) {
+            .main-container {
+                flex-direction: row;
+            }
+            .vending-machine {
+                margin-top: 0;
+            }
+            .services-container {
+                flex-direction: row;
+            }
+            nav {
+                flex-wrap: nowrap;
+            }
+            .logo {
+                font-size: 2em;
+            }
+            .contact-info {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+            .phone-number {
+                margin-right: 10px;
+            }
+        }
+        .contact-info {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#repairs">Repairs</a></li>
+        <li><a href="#sales">Machine Sales</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="logo">Appre<span>Vend</span></div>
+    <div class="contact-info">
+        <a href="tel:916-335-7871" class="phone-number">Call or text: 916-335-7871</a>
+        <p class="service-area">Servicing the Sacramento region &nbsp;</p>
+    </div>
+</nav>
+
+<div class="main-container">
+    <div class="content">
+        <section id="home">
+            <h2>Want vending at your business?</h2>
+            <p>We provide top-quality vending machine services for workplaces, apartments, businesses, and more. Enhance your space with our convenient and reliable vending solutions.</p>
+        </section>
+
+        <section id="services">
+            <h2>Our Services</h2>
+            <div class="services-container">
+                <div class="services-text">
+                    <div class="service-box">
+                        <h3>Workplace Vending</h3>
+                        <p>Boost employee satisfaction with convenient snack and beverage options right in the office.</p>
+                    </div>
+                    <div class="service-box">
+                        <h3>Apartment Complexes</h3>
+                        <p>Provide residents with 24/7 access to snacks and drinks, adding value to your property.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="service-box">
+                <h3>Business Locations</h3>
+                <p>Cater to your customer's needs in your waiting area or lobby with strategically placed vending machines.</p>
+            </div>
+        </section>
+
+        <section id="repairs">
+            <div class="section-header">
+                <h2>Vending Machine Repairs</h2>
+            </div>
+            <div class="service-box">
+                <h3>Compressor and Refrigeration Unit Repairs</h3>
+                <p>We offer expert repair services for vending machine compressors and refrigeration units. Our skilled technicians can diagnose and fix issues efficiently, ensuring your machines are back in operation quickly.</p>
+                <p>Repair costs typically range from $350 to $500, depending on the complexity of the issue and the parts required.</p>
+            </div>
+        </section>
+
+        <section id="sales">
+            <div class="section-header">
+                <h2>Machine Sales</h2>
+            </div>
+            <div class="section-content">
+                <div class="highlight-box">
+                    <p>Looking to purchase a vending machine? We offer a range of high-quality vending machines for sale. Contact us for more information on available models and pricing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <form id="contact-form">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <input type="text" id="city" placeholder="City of Location" required>
+                <input type="tel" id="phone" placeholder="Phone Number" required>
+                <textarea id="message" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </section>
+    </div>
+
+    <div class="vending-machine">
+        <img src="machines/wittern_pair.png" alt="Vending Machine" class="machine-image">
+        <h2>Try Our Vending Services</h2>
+        <select id="preset-selector">
+            <option value="sporty">Sporty</option>
+            <option value="classic">Classic</option>
+            <option value="healthy">Healthy</option>
+        </select>
+        <p>Click on a slot to cycle through different snacks!</p>
+        <svg
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:cc="http://creativecommons.org/ns#"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            xmlns:svg="http://www.w3.org/2000/svg"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+            xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+            xml:space="preserve"
+            style="shape-rendering:geometricPrecision;text-rendering:geometricPrecision;image-rendering:optimizeQuality;"
+            viewBox="0 0 52.0441 115.8585"
+            x="0px"
+            y="0px"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            id="svg2"
+            version="1.1"
+            inkscape:version="0.91 r13725"
+            sodipodi:docname="Q211584_noun_3705_ccSonerErtim_vending-machine.svg"
+        >
+            <metadata id="metadata36">
+                <rdf:RDF>
+                    <cc:Work rdf:about="">
+                        <dc:format>image/svg+xml</dc:format>
+                        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+                        <dc:title></dc:title>
+                    </cc:Work>
+                </rdf:RDF>
+            </metadata>
+            <sodipodi:namedview
+                pagecolor="#ffffff"
+                bordercolor="#666666"
+                borderopacity="1"
+                objecttolerance="10"
+                gridtolerance="10"
+                guidetolerance="10"
+                inkscape:pageopacity="0"
+                inkscape:pageshadow="2"
+                inkscape:window-width="1680"
+                inkscape:window-height="988"
+                id="namedview34"
+                showgrid="false"
+                inkscape:zoom="5.7614143"
+                inkscape:cx="24.441802"
+                inkscape:cy="59.867919"
+                inkscape:window-x="-8"
+                inkscape:window-y="-8"
+                inkscape:window-maximized="1"
+                inkscape:current-layer="svg2" />
+            <defs
+                id="defs4">
+                <style type="text/css" id="style6">
+                    .fil1 {fill:none}
+                    .fil0 {fill:black}
+                    .fil2 {fill:black;fill-rule:nonzero}
+                </style>
+            </defs>
+            <g id="g8" >
+                <path
+                    class="fil0"
+                    d="m 0,0 52.0441,0 0,88.1989 0,4.48788 -3.51697,0 0,-4.48788 -45.0102,0 0,4.48788 -3.51697,0 0,-4.48788 L -4e-5,0 Z m 10.5936,72.0776 23.6041,0 0,11.7451 -23.6041,0 0,-11.7451 z m 37.0228,-45.0091 0.599844,0 c 0.143393,0 0.261611,0.117123 0.261611,0.260516 l 0,0.600938 c 0,0.143393 -0.118217,0.260516 -0.261611,0.260516 l -0.599844,0 c -0.143393,0 -0.261611,-0.117123 -0.261611,-0.260516 l 0,-0.600938 c 0,-0.143393 0.118217,-0.260516 0.261611,-0.260516 z m -1.7853,0 0.600938,0 c 0.143393,0 0.260516,0.117123 0.260516,0.260516 l 0,0.600938 c 0,0.143393 -0.117123,0.260516 -0.260516,0.260516 l -0.600938,0 c -0.143393,0 -0.260516,-0.117123 -0.260516,-0.260516 l 0,-0.600938 c 0,-0.143393 0.117123,-0.260516 0.260516,-0.260516 z m -1.71196,0 0.599844,0 c 0.143393,0 0.261611,0.117123 0.261611,0.260516 l 0,0.600938 c 0,0.143393 -0.118217,0.260516 -0.261611,0.260516 l -0.599844,0 c -0.144488,0 -0.261611,-0.117123 -0.261611,-0.260516 l 0,-0.600938 c 0,-0.143393 0.117123,-0.260516 0.261611,-0.260516 z m 3.49726,-1.5828 0.599844,0 c 0.143393,0 0.261611,0.117123 0.261611,0.260516 l 0,0.600938 c 0,0.143393 -0.118217,0.260516 -0.261611,0.260516 l -0.599844,0 c -0.143393,0 -0.261611,-0.117123 -0.261611,-0.260516 l 0,-0.600938 c 0,-0.143393 0.118217,-0.260516 0.261611,-0.260516 z m -1.7853,0 0.600938,0 c 0.143393,0 0.260516,0.117123 0.260516,0.260516 l 0,0.600938 c 0,0.143393 -0.117123,0.260516 -0.260516,0.260516 l -0.600938,0 c -0.143393,0 -0.260516,-0.117123 -0.260516,-0.260516 l 0,-0.600938 c 0,-0.143393 0.117123,-0.260516 0.260516,-0.260516 z m -1.71196,0 0.599844,0 c 0.143393,0 0.261611,0.117123 0.261611,0.260516 l 0,0.600938 c 0,0.143393 -0.118217,0.260516 -0.261611,0.260516 l -0.599844,0 c -0.144488,0 -0.261611,-0.117123 -0.261611,-0.260516 l 0,-0.600938 c 0,-0.143393 0.117123,-0.260516 0.261611,-0.260516 z m 3.49726,-1.55543 0.599844,0 c 0.143393,0 0.261611,0.118217 0.261611,0.261611 l 0,0.599844 c 0,0.143393 -0.118217,0.261611 -0.261611,0.261611 l -0.599844,0 c -0.143393,0 -0.261611,-0.118217 -0.261611,-0.261611 l 0,-0.599844 c 0,-0.143393 0.118217,-0.261611 0.261611,-0.261611 z m -1.7853,0 0.600938,0 c 0.143393,0 0.260516,0.118217 0.260516,0.261611 l 0,0.599844 c 0,0.143393 -0.117123,0.261611 -0.260516,0.261611 l -0.600938,0 c -0.143393,0 -0.260516,-0.118217 -0.260516,-0.261611 l 0,-0.599844 c 0,-0.143393 0.117123,-0.261611 0.260516,-0.261611 z m -1.71196,0 0.599844,0 c 0.143393,0 0.261611,0.118217 0.261611,0.261611 l 0,0.599844 c 0,0.143393 -0.118217,0.261611 -0.261611,0.261611 l -0.599844,0 c -0.144488,0 -0.261611,-0.118217 -0.261611,-0.261611 l 0,-0.599844 c 0,-0.143393 0.117123,-0.261611 0.261611,-0.261611 z m 3.49726,-1.62658 0.599844,0 c 0.143393,0 0.261611,0.118217 0.261611,0.261611 l 0,0.599844 c 0,0.144488 -0.118217,0.261611 -0.261611,0.261611 l -0.599844,0 c -0.143393,0 -0.261611,-0.117123 -0.261611,-0.261611 l 0,-0.599844 c 0,-0.143393 0.118217,-0.261611 0.261611,-0.261611 z m -1.7853,0 0.600938,0 c 0.143393,0 0.260516,0.118217 0.260516,0.261611 l 0,0.599844 c 0,0.144488 -0.117123,0.261611 -0.260516,0.261611 l -0.600938,0 c -0.143393,0 -0.260516,-0.117123 -0.260516,-0.261611 l 0,-0.599844 c 0,-0.143393 0.117123,-0.261611 0.260516,-0.261611 z m -1.71196,0 0.599844,0 c 0.143393,0 0.261611,0.118217 0.261611,0.261611 l 0,0.599844 c 0,0.144488 -0.118217,0.261611 -0.261611,0.261611 l -0.599844,0 c -0.144488,0 -0.261611,-0.117123 -0.261611,-0.261611 l 0,-0.599844 c 0,-0.143393 0.117123,-0.261611 0.261611,-0.261611 z m -0.800156,-2.55809 0.385301,0 c 0.02955,0 0.05254,0.02408 0.05254,0.05254 l 0,1.39234 c 0,0.02846 -0.02299,0.05254 -0.05254,0.05254 l -0.385301,0 c -0.02846,0 -0.05254,-0.02408 -0.05254,-0.05254 l 0,-1.39234 c 0,-0.02846 0.02408,-0.05254 0.05254,-0.05254 z m 1.06505,0.374355 4.27115,0 c 0.02846,0 0.05254,0.02408 0.05254,0.05254 l 0,0.585614 c 0,0.02955 -0.02408,0.05254 -0.05254,0.05254 l -4.27115,0 c -0.02846,0 -0.05254,-0.02299 -0.05254,-0.05254 l 0,-0.585614 c 0,-0.02846 0.02408,-0.05254 0.05254,-0.05254 z m 0.240813,15.1833 3.33088,0 c 0.286787,0 0.522127,0.234246 0.522127,0.522127 l 0,3.33088 c 0,0.286787 -0.23534,0.522127 -0.522127,0.522127 l -3.33088,0 c -0.287881,0 -0.522127,-0.23534 -0.522127,-0.522127 l 0,-3.33088 c 0,-0.287881 0.234246,-0.522127 0.522127,-0.522127 z m 0,-5.64269 3.33088,0 c 0.286787,0 0.522127,0.23534 0.522127,0.522127 l 0,3.33088 c 0,0.287881 -0.23534,0.523221 -0.522127,0.523221 l -3.33088,0 c -0.287881,0 -0.522127,-0.23534 -0.522127,-0.523221 l 0,-3.33088 c 0,-0.286787 0.234246,-0.522127 0.522127,-0.522127 z m -40.2453,-21.37 36.0355,0 0,61.2541 -36.0355,0 0,-61.2541 z"
+                    id="path10"
+                    inkscape:connector-curvature="0"
+                    style="fill:#000000"
+                />
+                <line
+                    class="fil1"
+                    x1="28.0996"
+                    y1="59.1371"
+                    x2="28.0996"
+                    y2="65.8153"
+                    id="line12"
+                    style="fill:none"
+                />
+                <line
+                    class="fil1"
+                    x1="16.4694"
+                    y1="59.1371"
+                    x2="16.4694"
+                    y2="65.8153"
+                    id="line14"
+                    style="fill:none"
+                />
+                <polygon
+                class="fil0"
+                points="36.5007,55.6125 8.17561,55.6125 8.17561,54.3066 36.5007,54.3066 "
+                id="polygon16"
+                style="fill:#000000" /><polygon
+                class="fil0"
+                points="36.5007,44.0984 8.17561,44.0984 8.17561,42.7925 36.5007,42.7925 "
+                id="polygon18"
+                style="fill:#000000" /><polygon
+                class="fil0"
+                points="36.5007,32.0851 8.17561,32.0851 8.17561,30.7803 36.5007,30.7803 "
+                id="polygon20"
+                style="fill:#000000" /><polygon
+                class="fil0"
+                points="36.5007,20.5709 8.17561,20.5709 8.17561,19.2661 36.5007,19.2661 "
+                id="polygon22"
+                style="fill:#000000" /><line
+                class="fil1"
+                x1="9.4420605"
+                y1="19.918501"
+                x2="37.7672"
+                y2="19.918501"
+                id="line24"
+                style="fill:none" /><path
+                class="fil1"
+                d="m 28.0996,10.6625 0,6.67819 m -11.6302,-6.67819 0,6.67819 m 11.6302,28.44 0,6.67819 m -11.6302,-6.67819 0,6.67819 m 11.6302,-18.6532 0,6.67819 m -11.6302,-6.67819 0,6.67819 m 11.6302,-18.1923 0,6.67819 m -11.6302,-6.67819 0,6.67819"
+                id="path26"
+                inkscape:connector-curvature="0"
+                style="fill:none" /><path
+                class="fil2"
+                d="m 28.4258,10.6625 0,6.67819 -0.653479,0 0,-6.67819 0.653479,0 z m -11.6302,0 0,6.67819 -0.652385,0 0,-6.67819 0.652385,0 z m 11.6302,35.1182 0,6.67819 -0.653479,0 0,-6.67819 0.653479,0 z m -11.6302,0 0,6.67819 -0.652385,0 0,-6.67819 0.652385,0 z m 11.6302,-11.975 0,6.67819 -0.653479,0 0,-6.67819 0.653479,0 z m -11.6302,0 0,6.67819 -0.652385,0 0,-6.67819 0.652385,0 z m 11.6302,-11.5142 0,6.67819 -0.653479,0 0,-6.67819 0.653479,0 z m -11.6302,0 0,6.67819 -0.652385,0 0,-6.67819 0.652385,0 z"
+                id="path28"
+                inkscape:connector-curvature="0"
+                style="fill:#000000;fill-rule:nonzero" />
+
+                <image class="chip-slot" x="6" y="9" width="10" height="10" href="" id="slot-1" />
+                <image class="chip-slot" x="17.5" y="9" width="10" height="10" href="" id="slot-2" />
+                <image class="chip-slot" x="28" y="9" width="10" height="10" href="" id="slot-3" />
+                <image class="chip-slot" x="6" y="21" width="10" height="10" href="" id="slot-4" />
+                <image class="chip-slot" x="17.5" y="21" width="10" height="10" href="" id="slot-5" />
+                <image class="chip-slot" x="28" y="21" width="10" height="10" href="" id="slot-6" />
+                <image class="snack-slot" x="6" y="33" width="10" height="10" href="" id="slot-7" />
+                <image class="snack-slot" x="17.5" y="33" width="10" height="10" href="" id="slot-8" />
+                <image class="snack-slot" x="28" y="33" width="10" height="10" href="" id="slot-9" />
+                <image class="snack-slot" x="6" y="44" width="10" height="10" href="" id="slot-10" />
+                <image class="snack-slot" x="17.5" y="44" width="10" height="10" href="" id="slot-11" />
+                <image class="snack-slot" x="28" y="44" width="10" height="10" href="" id="slot-12" />
+                <image class="drink-slot" x="6" y="56" width="10" height="10" href="" id="slot-13" />
+                <image class="drink-slot" x="17.5" y="56" width="10" height="10" href="" id="slot-14" />
+                <image class="drink-slot" x="28" y="56" width="10" height="10" href="" id="slot-15" />
+
+            </g>
+        </svg>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 VendCo. All rights reserved.</p>
+</footer>
+
+<script>
+  $(document).ready(function() {
+    // Smooth scrolling for navigation
+    $('a[href^="#"]').on('click', function(event) {
+      var target = $(this.getAttribute('href'));
+      if( target.length ) {
+        event.preventDefault();
+        $('html, body').stop().animate({
+          scrollTop: target.offset().top - 100
+        }, 1000);
+      }
+    });
+
+    // Form submission
+    $('#contact-form').submit(function(e) {
+      e.preventDefault();
+      alert('Thank you for your message. We will get back to you soon!');
+      this.reset();
+    });
+
+    var chipImages = [
+      'chips/bakedcheetos.png',
+      'chips/bakedruffles.png',
+      'chips/bakenets.png',
+      'chips/cheetos.png',
+      'chips/cheezits.png',
+      'chips/doritos_blue.png',
+      'chips/doritos.png',
+      'chips/famousamos.png',
+      'chips/fritos.png',
+      'chips/hawaiianchips.png',
+      'chips/hotcheetos.png',
+      'chips/lays.jpg',
+      'chips/laysbbq.png',
+      'chips/popchips.png',
+      'chips/sunchips.png'
+    ];
+
+    var snackImages = [
+      'snacks/beefjerky.png',
+      'snacks/belvita.png',
+      'snacks/buildersbar.png',
+      'snacks/clifbar.png',
+      'snacks/cupnoodles.png',
+      'snacks/figbar.png',
+      'snacks/hersheys.png',
+      'snacks/kars.png',
+      'snacks/kitkat.png',
+      'snacks/nerdsclusters.png',
+      'snacks/nongshim.png',
+      'snacks/powercrunch.png',
+      'snacks/reeses.png',
+      'snacks/ricekrispies.png',
+      'snacks/rxbar.png',
+      'snacks/skittles.png',
+      'snacks/snickers.png',
+      'snacks/sourpatch.png',
+      'snacks/steakstick.png'
+    ];
+
+    var drinkImages = [
+      'drinks/celsius.png',
+      'drinks/coconutwater.png',
+      'drinks/coke.png',
+      'drinks/cokezero.png',
+      'drinks/drpepper.png',
+      'drinks/fairlife.png',
+      'drinks/gatorade.png',
+      'drinks/monster.png',
+      'drinks/mtndew.png',
+      'drinks/pepsi.png',
+      'drinks/redbull.png',
+      'drinks/snapple.png',
+      'drinks/sprite.png',
+      'drinks/water.png',
+      'drinks/yerbamate.png'
+    ];
+
+    var presets = {
+      classic: {
+        chips: ['chips/doritos.png', 'chips/lays.jpg', 'chips/cheetos.png',
+          'chips/cheezits.png', 'chips/hotcheetos.png', 'chips/fritos.png' ],
+        snacks: ['snacks/snickers.png', 'snacks/kitkat.png', 'snacks/nerdsclusters.png',
+          'snacks/skittles.png', 'snacks/hersheys.png', 'snacks/cupnoodles.png'],
+        drinks: ['drinks/coke.png', 'drinks/sprite.png', 'drinks/drpepper.png']
+      },
+      healthy: {
+        chips: ['chips/bakenets.png', 'chips/popchips.png', 'chips/hawaiianchips.png',
+          'chips/bakedcheetos.png', 'chips/bakedruffles.png', 'chips/sunchips.png'],
+        snacks: ['snacks/clifbar.png', 'snacks/kars.png', 'snacks/rxbar.png',
+          'snacks/beefjerky.png', 'snacks/figbar.png', 'snacks/belvita.png'],
+        drinks: ['drinks/celsius.png', 'drinks/coconutwater.png', 'drinks/cokezero.png']
+      },
+      sporty: {
+        chips: ['chips/popchips.png', 'chips/famousamos.png', 'snacks/beefjerky.png',
+          'snacks/clifbar.png', 'snacks/rxbar.png', 'chips/bakenets.png'],
+        snacks: ['snacks/powercrunch.png', 'snacks/buildersbar.png', 'snacks/kars.png',
+          'snacks/steakstick.png', 'snacks/belvita.png', 'snacks/nongshim.png'],
+        drinks: ['drinks/fairlife.png', 'drinks/gatorade.png', 'drinks/monster.png']
+      }
+    };
+
+    function updateVendingMachine(preset) {
+      $('.chip-slot').each(function(index) {
+        $(this).attr('href', presets[preset].chips[index % presets[preset].chips.length]);
+        $(this).data('index', index % presets[preset].chips.length);
+      });
+
+      $('.snack-slot').each(function(index) {
+        $(this).attr('href', presets[preset].snacks[index % presets[preset].snacks.length]);
+        $(this).data('index', index % presets[preset].snacks.length);
+      });
+
+      $('.drink-slot').each(function(index) {
+        $(this).attr('href', presets[preset].drinks[index % presets[preset].drinks.length]);
+        $(this).data('index', index % presets[preset].drinks.length);
+      });
+    }
+
+    $('#preset-selector').change(function() {
+      updateVendingMachine($(this).val());
+    });
+
+    // Initialize with classic preset
+    updateVendingMachine('sporty');
+
+    // Set up click behavior
+    $('.chip-slot, .snack-slot, .drink-slot').click(function() {
+      var currentIndex = $(this).data('index');
+      var slotType = $(this).attr('class').split('-')[0];
+      var imageList = (slotType === 'chip') ? chipImages :
+        (slotType === 'snack') ? snackImages : drinkImages;
+
+      currentIndex = (currentIndex + 1) % imageList.length;
+      $(this).attr('href', imageList[currentIndex]);
+      $(this).data('index', currentIndex);
+    });
+  });
+</script>
+</body>
+</html>
