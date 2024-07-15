@@ -38,8 +38,22 @@
             border-radius: 5px;
             text-decoration: none;
             margin-bottom: 5px;
+            margin-right: 10px;
+        }
+        .email-address {
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #000000;
+            background-color: white;
+            padding: 2px 4px;
+            border-radius: 10px;
+            text-decoration: none;
         }
         .phone-number:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .email-address:hover {
             background-color: #4CAF50;
             color: white;
         }
@@ -219,12 +233,6 @@
                 flex-direction: row;
                 justify-content: flex-end;
             }
-            .phone-number {
-                margin-right: 10px;
-            }
-        }
-        .contact-info {
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -239,6 +247,8 @@
     </ul>
     <div class="logo">Snacci <span>Vending</span></div>
     <div class="contact-info">
+        <a href="mailto:contact@snacci.com" class="email-address">Email us at: contact@snacci.com</a>
+        </br>
         <a href="tel:916-335-7871" class="phone-number">Call or text: 916-335-7871</a>
         <p class="service-area">Servicing the Sacramento region &nbsp;</p>
     </div>
@@ -295,7 +305,7 @@
 
         <section id="contact">
             <h2>Contact Us</h2>
-            <form id="contact-form">
+            <form id="contact-form" action="https://formsubmit.co/YOUR_EMAIL">
                 <input type="text" id="name" placeholder="Your Name" required>
                 <input type="email" id="email" placeholder="Your Email" required>
                 <input type="text" id="address" placeholder="Desired Address" required>
