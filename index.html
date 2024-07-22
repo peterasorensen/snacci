@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snacci Vending - Servicing Greater Sacramento and Roseville</title>
+    <title>Snacci Vending - Servicing Greater Sacramento & Roseville</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         body {
@@ -100,13 +100,30 @@
             margin-top: 20px;
         }
         .service-box {
+            flex: 1;
             background: #f4f4f4;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
             border-radius: 5px;
         }
+        .areas {
+            font-size: 10px;
+            margin-top: 5px;
+            background: rgba(232, 203, 203, 0.52);
+            border-radius: 5px;
+        }
+        .areas h3 {
+            margin: 0;
+        }
+        .areas ul {
+            padding-inline-start: 20px;
+            margin: 0;
+            /*white-space: nowrap;*/
+        }
+        h2 {
+            margin-block: 0.4em;
+        }
         .service-box h3 {
-            margin-top: 0;
+            margin: 0;
         }
         #contact-form {
             background: #f4f4f4;
@@ -153,14 +170,13 @@
         }
         .services-container {
             display: flex;
-            flex-direction: column;
             gap: 20px;
         }
         .machine-image {
             max-width: 100%;
             height: auto;
             display: block;
-            margin: 20px auto;
+            margin: 5px auto;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
@@ -211,15 +227,25 @@
             .services-container {
                 flex-direction: row;
             }
-            nav {
-                flex-wrap: nowrap;
-            }
             .logo {
                 font-size: 2em;
             }
             .contact-info {
                 flex-direction: row;
                 justify-content: flex-end;
+            }
+        }
+        @media (max-width: 600px) {
+            nav {
+                justify-content: center;
+            }
+            .services-container {
+                display: flex;
+                gap: 10px;
+                font-size: 12px;
+            }
+            .service-box {
+                padding: 10px;
             }
         }
     </style>
@@ -241,27 +267,35 @@
 
 <div class="main-container">
     <div class="content">
-        <section id="home">
-            <h2>Want vending at your business?</h2>
-            <p>We provide top-quality vending machine services for workplaces, apartments, businesses, and more. Enhance your space with our convenient and reliable vending solutions.</p>
-        </section>
-
         <section id="services">
             <h2>Our Services</h2>
+            <p>We provide top-quality vending machine services in greater Sacramento and Roseville.</p>
             <div class="services-container">
                 <div class="service-box">
                     <h3>Workplace Vending</h3>
-                    <p>Boost employee satisfaction with convenient snack and beverage options right in the office.</p>
+                    <p>Boost employee satisfaction with convenient snack and beverage options in the office.</p>
                 </div>
                 <div class="service-box">
-                    <h3>Apartment Complexes</h3>
+                    <h3>Apartment Complex</h3>
                     <p>Provide residents with 24/7 access to snacks and drinks, adding value to your property.</p>
                 </div>
                 <div class="service-box">
                     <h3>Business Locations</h3>
-                    <p>Cater to your customer's needs in your waiting area or lobby with strategically placed vending machines.</p>
+                    <p>Cater to your customer's needs in your waiting area or lobby.</p>
                 </div>
             </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <form id="contact-form" action="https://formsubmit.co/contact@snacci.com" method="POST">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <input type="text" id="address" placeholder="Desired Address" required>
+                <input type="tel" id="phone" placeholder="Phone Number" required>
+                <textarea id="message" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
         </section>
 
         <section id="repairs">
@@ -285,22 +319,35 @@
                 </div>
             </div>
         </section>
-
-        <section id="contact">
-            <h2>Contact Us</h2>
-            <form id="contact-form" action="https://formsubmit.co/YOUR_EMAIL">
-                <input type="text" id="name" placeholder="Your Name" required>
-                <input type="email" id="email" placeholder="Your Email" required>
-                <input type="text" id="address" placeholder="Desired Address" required>
-                <input type="tel" id="phone" placeholder="Phone Number" required>
-                <textarea id="message" placeholder="Your Message" required></textarea>
-                <button type="submit">Send Message</button>
-            </form>
-        </section>
     </div>
 
     <div class="vending-machine">
         <a href="mailto:contact@snacci.com" class="email-address">Email us at: contact@snacci.com</a>
+        <div class="areas">
+            <h3>Service Areas</h3>
+            <div style="display: flex; justify-content: space-between;">
+                <ul>
+                    <li><b>Roseville</b></li>
+                    <li><b>Rocklin</b></li>
+                    <li><b>Lincoln</b></li>
+                </ul>
+                <ul>
+                    <li><b>Folsom</b></li>
+                    <li><b>Granite Bay</b></li>
+                    <li><b>Rancho Cordova</b></li>
+                </ul>
+                <ul>
+                    <li><b>Citrus Heights</b></li>
+                    <li><b>Carmichael</b></li>
+                    <li><b>Fair Oaks</b></li>
+                </ul>
+                <ul>
+                    <li><b>Natomas</b></li>
+                    <li><b>Antelope</b></li>
+                    <li><b>Elk Grove</b></li>
+                </ul>
+            </div>
+        </div>
         <img src="machines/wittern_pair.png" alt="Vending Machine" class="machine-image">
         <h2>Try Our Vending Services</h2>
         <select id="preset-selector">
@@ -467,7 +514,6 @@
 
     // Form submission
     $('#contact-form').submit(function(e) {
-      e.preventDefault();
       alert('Thank you for your message. We will get back to you soon!');
       this.reset();
     });
