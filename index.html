@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VendCo - Your Vending Solution</title>
+    <title>Snacci Vending - Servicing Greater Sacramento and Roseville</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         body {
@@ -41,7 +41,7 @@
             margin-right: 10px;
         }
         .email-address {
-            font-size: 0.8em;
+            font-size: 1.0em;
             font-weight: bold;
             color: #000000;
             background-color: white;
@@ -84,6 +84,7 @@
             flex-direction: column;
             width: 100%;
             max-width: 1200px;
+            box-sizing: border-box;
             margin: auto;
             padding: 20px;
         }
@@ -133,25 +134,15 @@
             background-color: #333;
             color: white;
             text-align: center;
-            padding: 1rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
             width: 100%;
-        }
-        #vending-svg {
-            width: 100%;
-            height: auto;
-            max-width: 300px;
-            margin: 0 auto;
-            display: block;
         }
         .snack-slot, .drink-slot, .chip-slot {
             cursor: pointer;
         }
         .snack-slot:hover, .drink-slot:hover, .chip-slot:hover {
             opacity: 0.8;
-        }
-        .grid-line {
-            stroke: #888888;
-            stroke-width: 1;
         }
         #preset-selector {
             margin-bottom: 10px;
@@ -164,9 +155,6 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-        }
-        .services-text {
-            flex: 1;
         }
         .machine-image {
             max-width: 100%;
@@ -239,7 +227,6 @@
 <body>
 <nav>
     <ul>
-        <li><a href="#home">Home</a></li>
         <li><a href="#services">Services</a></li>
         <li><a href="#repairs">Repairs</a></li>
         <li><a href="#sales">Machine Sales</a></li>
@@ -247,10 +234,8 @@
     </ul>
     <div class="logo">Snacci <span>Vending</span></div>
     <div class="contact-info">
-        <a href="mailto:contact@snacci.com" class="email-address">Email us at: contact@snacci.com</a>
-        </br>
         <a href="tel:916-335-7871" class="phone-number">Call or text: 916-335-7871</a>
-        <p class="service-area">Servicing the Sacramento region &nbsp;</p>
+        <p class="service-area">Greater Sacramento and Roseville &nbsp;</p>
     </div>
 </nav>
 
@@ -264,20 +249,18 @@
         <section id="services">
             <h2>Our Services</h2>
             <div class="services-container">
-                <div class="services-text">
-                    <div class="service-box">
-                        <h3>Workplace Vending</h3>
-                        <p>Boost employee satisfaction with convenient snack and beverage options right in the office.</p>
-                    </div>
-                    <div class="service-box">
-                        <h3>Apartment Complexes</h3>
-                        <p>Provide residents with 24/7 access to snacks and drinks, adding value to your property.</p>
-                    </div>
+                <div class="service-box">
+                    <h3>Workplace Vending</h3>
+                    <p>Boost employee satisfaction with convenient snack and beverage options right in the office.</p>
                 </div>
-            </div>
-            <div class="service-box">
-                <h3>Business Locations</h3>
-                <p>Cater to your customer's needs in your waiting area or lobby with strategically placed vending machines.</p>
+                <div class="service-box">
+                    <h3>Apartment Complexes</h3>
+                    <p>Provide residents with 24/7 access to snacks and drinks, adding value to your property.</p>
+                </div>
+                <div class="service-box">
+                    <h3>Business Locations</h3>
+                    <p>Cater to your customer's needs in your waiting area or lobby with strategically placed vending machines.</p>
+                </div>
             </div>
         </section>
 
@@ -317,6 +300,7 @@
     </div>
 
     <div class="vending-machine">
+        <a href="mailto:contact@snacci.com" class="email-address">Email us at: contact@snacci.com</a>
         <img src="machines/wittern_pair.png" alt="Vending Machine" class="machine-image">
         <h2>Try Our Vending Services</h2>
         <select id="preset-selector">
@@ -465,7 +449,7 @@
 </div>
 
 <footer>
-    <p>&copy; 2024 VendCo. All rights reserved.</p>
+    <p>&copy; 2024 Snacci Vending. All rights reserved.</p>
 </footer>
 
 <script>
