@@ -11,6 +11,27 @@ body {
     color: #333;
 }
 
+.brochure-link {
+    background-color: #f8f8f8;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.learn-more-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.learn-more-btn:hover {
+    background-color: #0056b3;
+}
+
 /* Header and navigation */
 header {
     background-color: #2c3e50;
