@@ -8,8 +8,15 @@
 	},
 	"dependencies": {
 		"apify": "^3.1.10",
-		"crawlee": "^3.5.4"
+		"cheerio": "^1.0.0",
+		"crawlee": "^3.5.4",
+		"got-scraping": "^4.0.6"
 	},
 	"author": "It's not you it's me",
-	"license": "ISC"
+	"license": "ISC",
+	"main": "main.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": []
 }
