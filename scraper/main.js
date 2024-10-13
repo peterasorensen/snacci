@@ -40,7 +40,6 @@ try {
                 console.log(`Processing ${request.url}...`);
 
                 // Look for email patterns on the page
-                console.log($.html());
                 const emails = $.html().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
 
                 // Extract emails from custom attributes
