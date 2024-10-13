@@ -1,4 +1,4 @@
-import { Actor, Apify } from 'apify';
+import { Actor } from 'apify';
 import { CheerioCrawler } from 'crawlee';
 
 await Actor.init();
@@ -53,7 +53,7 @@ const crawler = new CheerioCrawler({
             if (emails.length > 0) {
                 const uniqueEmails = [...new Set(emails)]; // Remove duplicates
                 console.log(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
-                await Apify.pushData({ url: request.url, emails: uniqueEmails });
+                await Actor.pushData({ url: request.url, emails: uniqueEmails });
             } else {
                 console.log(`No emails found on ${request.url}`);
             }
