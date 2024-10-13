@@ -26,6 +26,9 @@ Apify.main(async () => {
         console.log(`Added to queue: ${website}`);
     }
 
+    // Create a dataset to store all scraped emails
+    const dataset = await Apify.openDataset('scraped-emails');
+
     // Create a Cheerio-based crawler
     const crawler = new Apify.CheerioCrawler({
         requestQueue,
@@ -38,7 +41,7 @@ Apify.main(async () => {
             if (emails) {
                 const uniqueEmails = [...new Set(emails)]; // Remove duplicates
                 console.log(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
-                await Apify.pushData({ url: request.url, emails: uniqueEmails });
+                await dataset.pushData({ url: request.url, emails: uniqueEmails });
             } else {
                 console.log(`No emails found on ${request.url}`);
             }
@@ -68,4 +71,11 @@ Apify.main(async () => {
     console.log('Starting the crawler...');
     await crawler.run();
     console.log('Crawler finished');
+
+    // Retrieve all scraped data from the dataset
+    const scrapedData = await dataset.getData();
+
+    // Set the output of the actor
+    await Apify.setValue('OUTPUT', scrapedData);
+    console.log('Output data has been saved.');
 });
