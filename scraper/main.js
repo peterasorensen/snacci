@@ -1,94 +1,84 @@
-const Apify = require('apify');
+import { Actor } from 'apify';
+import { CheerioCrawler } from 'crawlee';
 
-Apify.main(async () => {
-    Apify.utils.log.info('Starting the scraper...');
-    // try {
-    //     Apify.utils.log.info('Starting the scraper...');
+await Actor.init();
 
-    //     // Get input from the UI
-    //     const input = await Apify.getInput();
-    //     Apify.utils.log.info('Received input:', { input });
+const log = Actor.log;
+log.info('Starting the scraper...');
 
-    //     // Ensure that the input contains a list of websites
-    //     const websites = input.websites;
-    //     if (!websites || !Array.isArray(websites)) {
-    //         throw new Error('Invalid input: Input must contain an array of websites.');
-    //     }
+try {
+    // Get input from the UI
+    const input = await Actor.getInput();
+    log.info('Received input:', { input });
 
-    //     Apify.utils.log.info(`Number of websites to scrape: ${websites.length}`);
+    // Ensure that the input contains a list of websites
+    const websites = input.websites;
+    if (!websites || !Array.isArray(websites)) {
+        throw new Error('Invalid input: Input must contain an array of websites.');
+    }
 
-    //     // Initialize the request queue
-    //     const requestQueue = await Apify.openRequestQueue();
-    //     Apify.utils.log.info('Request queue initialized');
+    log.info(`Number of websites to scrape: ${websites.length}`);
 
-    //     // Add each website in the list to the request queue
-    //     for (const website of websites) {
-    //         await requestQueue.addRequest({ url: website });
-    //         Apify.utils.log.debug(`Added to queue: ${website}`);
-    //     }
+    // Initialize the request queue
+    const requestQueue = await Actor.openRequestQueue();
+    log.info('Request queue initialized');
 
-    //     // Create a dataset to store all scraped emails
-    //     const dataset = await Apify.openDataset('scraped-emails');
+    // Add each website in the list to the request queue
+    for (const website of websites) {
+        await requestQueue.addRequest({ url: website });
+        log.debug(`Added to queue: ${website}`);
+    }
 
-    //     // Create a Cheerio-based crawler
-    //     const crawler = new Apify.CheerioCrawler({
-    //         requestQueue,
-    //         proxyConfiguration: await Apify.createProxyConfiguration({ useApifyProxy: true }),
-    //         handlePageFunction: async ({ request, $ }) => {
-    //             try {
-    //                 Apify.utils.log.info(`Processing ${request.url}...`);
+    // Create a dataset to store all scraped emails
+    const dataset = await Actor.openDataset('scraped-emails');
 
-    //                 // Look for email patterns on the page
-    //                 const emails = $('body').text().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
-    //                 if (emails) {
-    //                     const uniqueEmails = [...new Set(emails)]; // Remove duplicates
-    //                     Apify.utils.log.info(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
-    //                     await dataset.pushData({ url: request.url, emails: uniqueEmails });
-    //                 } else {
-    //                     Apify.utils.log.info(`No emails found on ${request.url}`);
-    //                 }
+    // Create a Cheerio-based crawler
+    const crawler = new CheerioCrawler({
+        requestQueue,
+        proxyConfiguration: await Actor.createProxyConfiguration(),
+        async requestHandler({ request, $, enqueueLinks }) {
+            try {
+                log.info(`Processing ${request.url}...`);
 
-    //                 // Find and add links to pages like "contact", "about", or "team"
-    //                 let enqueuedCount = 0;
-    //                 $('a[href]').each((index, el) => {
-    //                     const href = $(el).attr('href');
-    //                     const linkText = $(el).text().toLowerCase();
-    //                     if (href && (href.startsWith('/') || href.startsWith('http'))) {
-    //                         try {
-    //                             const absoluteUrl = new URL(href, request.loadedUrl).href;
-    //                             if (linkText.includes('contact') || linkText.includes('about') || linkText.includes('team')) {
-    //                                 requestQueue.addRequest({ url: absoluteUrl }, { forefront: true });
-    //                                 Apify.utils.log.debug(`Enqueued page: ${absoluteUrl}`);
-    //                                 enqueuedCount++;
-    //                             }
-    //                         } catch (error) {
-    //                             Apify.utils.log.error(`Error processing URL ${href}: ${error.message}`);
-    //                         }
-    //                     }
-    //                 });
-    //                 Apify.utils.log.info(`Enqueued ${enqueuedCount} additional pages from ${request.url}`);
-    //             } catch (error) {
-    //                 Apify.utils.log.error(`Error processing ${request.url}: ${error.message}`);
-    //             }
-    //         },
-    //         handleFailedRequestFunction: async ({ request, error }) => {
-    //             Apify.utils.log.error(`Request failed for ${request.url}: ${error.message}`);
-    //         },
-    //     });
+                // Look for email patterns on the page
+                const emails = $('body').text().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+                if (emails) {
+                    const uniqueEmails = [...new Set(emails)]; // Remove duplicates
+                    log.info(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
+                    await dataset.pushData({ url: request.url, emails: uniqueEmails });
+                } else {
+                    log.info(`No emails found on ${request.url}`);
+                }
 
-    //     // Start the crawler
-    //     Apify.utils.log.info('Starting the crawler...');
-    //     await crawler.run();
-    //     Apify.utils.log.info('Crawler finished');
+                // Find and add links to pages like "contact", "about", or "team"
+                await enqueueLinks({
+                    globs: ['**/*contact*', '**/*about*', '**/*team*'],
+                    label: 'DETAIL',
+                });
 
-    //     // Retrieve all scraped data from the dataset
-    //     const scrapedData = await dataset.getData();
+            } catch (error) {
+                log.error(`Error processing ${request.url}: ${error.message}`);
+            }
+        },
+        failedRequestHandler({ request, error }) {
+            log.error(`Request failed for ${request.url}: ${error.message}`);
+        },
+    });
 
-    //     // Set the output of the actor
-    //     await Apify.setValue('OUTPUT', scrapedData);
-    //     Apify.utils.log.info('Output data has been saved.');
-    // } catch (error) {
-    //     Apify.utils.log.error('An error occurred during the actor run:', error);
-    //     throw error;  // Re-throw the error so Apify knows the run failed
-    // }
-});
+    // Start the crawler
+    log.info('Starting the crawler...');
+    await crawler.run();
+    log.info('Crawler finished');
+
+    // Retrieve all scraped data from the dataset
+    const scrapedData = await dataset.getData();
+
+    // Set the output of the actor
+    await Actor.setValue('OUTPUT', scrapedData);
+    log.info('Output data has been saved.');
+} catch (error) {
+    log.error('An error occurred during the actor run:', error);
+    throw error;  // Re-throw the error so Apify knows the run failed
+}
+
+await Actor.exit();
