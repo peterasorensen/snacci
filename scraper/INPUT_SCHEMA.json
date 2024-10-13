@@ -5,7 +5,7 @@
   "properties": {
     "websites": {
       "type": "array",
-      "editor": "textfield",
+      "editor": "stringList",
       "title": "List of Websites",
       "description": "Provide an array of websites to scrape for emails.",
       "items": {
