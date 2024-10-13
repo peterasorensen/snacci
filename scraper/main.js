@@ -2,11 +2,22 @@ const Apify = require('apify');
 const cheerio = require('cheerio');
 
 Apify.main(async () => {
-    const website = 'https://example.com'; // Replace with your target website URL
+    // Get input from the UI
+    const input = await Apify.getInput();
+
+    // Ensure that the input contains a list of websites
+    const websites = input.websites;
+    if (!websites || !Array.isArray(websites)) {
+        throw new Error('Input must contain an array of websites.');
+    }
 
     // Initialize the request queue
     const requestQueue = await Apify.openRequestQueue();
-    await requestQueue.addRequest({ url: website });
+
+    // Add each website in the list to the request queue
+    for (const website of websites) {
+        await requestQueue.addRequest({ url: website });
+    }
 
     // Create a Cheerio-based crawler
     const crawler = new Apify.CheerioCrawler({
@@ -26,7 +37,7 @@ Apify.main(async () => {
             $('a[href]').each((index, el) => {
                 const href = $(el).attr('href');
                 const linkText = $(el).text().toLowerCase();
-                if (href && href.startsWith('/') && (linkText.includes('contact') || linkText.includes('about') || linkText.includes('team'))) {
+                if (href && href.startsWith('/') && (linkText.includes('contact') || linkText.includes('about') || 'team')) {
                     const absoluteUrl = new URL(href, request.loadedUrl).href;
                     requestQueue.addRequest({ url: absoluteUrl });
                     console.log(`Enqueued page: ${absoluteUrl}`);

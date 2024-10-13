@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "websites": {
+      "type": "array",
+      "title": "List of Websites",
+      "description": "Provide an array of websites to scrape for emails.",
+      "items": {
+        "type": "string",
+        "format": "url"
+      }
+    }
+  },
+  "required": ["websites"]
+}
+
