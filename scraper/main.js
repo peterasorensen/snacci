@@ -55,6 +55,9 @@ try {
                     const uniqueEmails = [...new Set(emails)]; // Remove duplicates
                     console.log(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
                     await dataset.pushData({ url: request.url, emails: uniqueEmails });
+                    // Set the output of the actor
+                    await Actor.setValue('OUTPUT', scrapedData);
+                    console.log('Output data has been saved.');
                 } else {
                     console.log(`No emails found on ${request.url}`);
                 }
@@ -78,13 +81,6 @@ try {
     console.log('Starting the crawler...');
     await crawler.run();
     console.log('Crawler finished');
-
-    // Retrieve all scraped data from the dataset
-    const scrapedData = await dataset.getData();
-
-    // Set the output of the actor
-    await Actor.setValue('OUTPUT', scrapedData);
-    console.log('Output data has been saved.');
 } catch (error) {
     console.error('An error occurred during the actor run:', error);
     throw error;  // Re-throw the error so Apify knows the run failed
