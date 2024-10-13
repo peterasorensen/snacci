@@ -80,7 +80,7 @@ try {
     console.log('Crawler finished');
 
     // Retrieve all scraped data from the dataset
-    const scrapedData = await dataset.getData();
+    const { items: scrapedData } = await dataset.getData();  // Ensure correct destructuring
     console.log('Scraped data:', scrapedData);
 
     // Set the output of the actor
