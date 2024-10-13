@@ -1,4 +1,4 @@
-import { Actor } from 'apify';
+import { Actor, Apify } from 'apify';
 import { CheerioCrawler } from 'crawlee';
 
 await Actor.init();
@@ -28,7 +28,7 @@ for (const website of websites) {
 }
 
 // Create a dataset to store all scraped emails
-const dataset = await Actor.openDataset('scraped-emails');
+// const dataset = await Actor.openDataset('scraped-emails');
 
 // Create a Cheerio-based crawler
 const crawler = new CheerioCrawler({
@@ -53,7 +53,7 @@ const crawler = new CheerioCrawler({
             if (emails.length > 0) {
                 const uniqueEmails = [...new Set(emails)]; // Remove duplicates
                 console.log(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
-                await dataset.pushData({ url: request.url, emails: uniqueEmails });
+                await Apify.pushData({ url: request.url, emails: uniqueEmails });
             } else {
                 console.log(`No emails found on ${request.url}`);
             }
