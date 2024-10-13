@@ -1,4 +1,5 @@
 {
+  "title": "Website Email Scraper Input",
   "type": "object",
   "properties": {
     "websites": {
