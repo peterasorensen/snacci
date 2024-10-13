@@ -1,5 +1,4 @@
 const Apify = require('apify');
-const cheerio = require('cheerio');
 
 Apify.main(async () => {
     console.log('Starting the scraper...');
@@ -37,8 +36,9 @@ Apify.main(async () => {
             // Look for email patterns on the page
             const emails = $('body').text().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
             if (emails) {
-                console.log(`Emails found on ${request.url}: ${emails.join(', ')}`);
-                await Apify.pushData({ url: request.url, emails });
+                const uniqueEmails = [...new Set(emails)]; // Remove duplicates
+                console.log(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
+                await Apify.pushData({ url: request.url, emails: uniqueEmails });
             } else {
                 console.log(`No emails found on ${request.url}`);
             }
@@ -48,11 +48,13 @@ Apify.main(async () => {
             $('a[href]').each((index, el) => {
                 const href = $(el).attr('href');
                 const linkText = $(el).text().toLowerCase();
-                if (href && href.startsWith('/') && (linkText.includes('contact') || linkText.includes('about') || linkText.includes('team'))) {
+                if (href && (href.startsWith('/') || href.startsWith('http'))) {
                     const absoluteUrl = new URL(href, request.loadedUrl).href;
-                    requestQueue.addRequest({ url: absoluteUrl });
-                    console.log(`Enqueued page: ${absoluteUrl}`);
-                    enqueuedCount++;
+                    if (linkText.includes('contact') || linkText.includes('about') || linkText.includes('team')) {
+                        requestQueue.addRequest({ url: absoluteUrl }, { forefront: true });
+                        console.log(`Enqueued page: ${absoluteUrl}`);
+                        enqueuedCount++;
+                    }
                 }
             });
             console.log(`Enqueued ${enqueuedCount} additional pages from ${request.url}`);
