@@ -1,22 +1,12 @@
 {
-	"name": "snacci",
-	"version": "0.0.1",
-	"type": "module",
-	"description": "This is a boilerplate of an Apify actor.",
-	"engines": {
-		"node": ">=18.0.0"
-	},
-	"dependencies": {
-		"apify": "^3.1.10",
-		"cheerio": "^1.0.0",
-		"crawlee": "^3.5.4",
-		"got-scraping": "^4.0.6"
-	},
-	"author": "It's not you it's me",
-	"license": "ISC",
-	"main": "main.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": []
+    "name": "my-actor",
+    "version": "0.0.1",
+    "type": "module",
+    "dependencies": {
+        "apify": "^3.1.10"
+    },
+    "scripts": {
+        "start": "node main.js"
+    },
+    "author": "Me!"
 }
