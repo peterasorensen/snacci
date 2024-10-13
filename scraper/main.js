@@ -39,12 +39,21 @@ try {
             try {
                 console.log(`Processing ${request.url}...`);
 
-                // Look for email patterns on the page
-                const emails = $('body').text().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
-                if (emails) {
-                    const uniqueEmails = [...new Set(emails)]; // Remove duplicates
-                    console.log(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
-                    await dataset.pushData({ url: request.url, emails: uniqueEmails });
+                // Look for email patterns in the text
+                const textEmails = $('body').text().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+
+                // Look for email patterns in mailto links
+                const mailtoLinks = $('a[href^="mailto:"]').map((i, el) => {
+                    const href = $(el).attr('href');
+                    return href ? href.replace('mailto:', '') : null;
+                }).get();
+
+                // Combine and deduplicate emails
+                const emails = [...new Set([...textEmails, ...mailtoLinks])];
+
+                if (emails.length > 0) {
+                    console.log(`Emails found on ${request.url}: ${emails.join(', ')}`);
+                    await dataset.pushData({ url: request.url, emails });
                 } else {
                     console.log(`No emails found on ${request.url}`);
                 }
