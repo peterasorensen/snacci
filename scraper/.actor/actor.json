@@ -1,5 +1,31 @@
 {
     "actorSpecification": 1,
     "name": "snacci",
-    "version": "0.0"
+    "version": "0.0",
+    "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "views": {
+        "overview": {
+          "title": "Overview",
+          "transformation": {
+            "fields": ["url", "emails"]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "url": {
+                "label": "URL",
+                "format": "link"
+              },
+              "emails": {
+                "label": "Emails",
+                "format": "array"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
