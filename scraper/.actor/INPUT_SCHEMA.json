@@ -8,7 +8,7 @@
       "editor": "stringList",
       "title": "List of Websites",
       "description": "Provide an array of websites to scrape for emails.",
-      "prefill": [{ "url": "https://docs.apify.com/" }]
+      "prefill": ["https://docs.apify.com/"]
     }
   },
   "required": ["websites"]
