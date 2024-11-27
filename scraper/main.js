@@ -21,14 +21,14 @@ console.log(`Number of websites to scrape: ${websites.length}`);
 const requestQueue = await Actor.openRequestQueue();
 console.log('Request queue initialized');
 
-// Add each website in the list to the request queue
+// Only used if remove duplicates option is selected
+const emailMap = new Map();
+
+// Add each website to the request queue
 for (const website of websites) {
     await requestQueue.addRequest({ url: website });
     console.debug(`Added to queue: ${website}`);
 }
-
-// Create a dataset to store all scraped emails
-// const dataset = await Actor.openDataset('scraped-emails');
 
 // Create a Cheerio-based crawler
 const crawler = new CheerioCrawler({
@@ -53,7 +53,13 @@ const crawler = new CheerioCrawler({
             if (emails.length > 0) {
                 const uniqueEmails = [...new Set(emails)]; // Remove duplicates
                 console.log(`Emails found on ${request.url}: ${uniqueEmails.join(', ')}`);
-                await Actor.pushData({ url: request.url, emails: uniqueEmails });
+                
+                for (const email of uniqueEmails) {
+                    if (!input.removeDuplicateEmails || !emailMap.has(email)) {
+                        emailMap.set(email, request.url);
+                        await Actor.pushData({ email: email, sourceUrl: request.url });
+                    }
+                }
             } else {
                 console.log(`No emails found on ${request.url}`);
             }

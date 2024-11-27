@@ -9,18 +9,18 @@
         "overview": {
           "title": "Overview",
           "transformation": {
-            "fields": ["url", "emails"]
+            "fields": ["email", "sourceUrl"]
           },
           "display": {
             "component": "table",
             "properties": {
-              "url": {
-                "label": "URL",
-                "format": "link"
+              "email": {
+                "label": "Email",
+                "format": "text"
               },
-              "emails": {
-                "label": "Emails",
-                "format": "array"
+              "sourceUrl": {
+                "label": "Source URL",
+                "format": "link"
               }
             }
           }

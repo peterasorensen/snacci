@@ -9,6 +9,12 @@
       "title": "List of Websites",
       "description": "Provide an array of websites to scrape for emails.",
       "prefill": ["https://docs.apify.com/"]
+    },
+    "removeDuplicateEmails": {
+      "type": "boolean",
+      "title": "Remove Duplicate Emails",
+      "description": "If enabled, removes duplicate emails even if found on seaparate webpages. If disabled, outputs all found emails including duplicates.",
+      "default": true
     }
   },
   "required": ["websites"]
