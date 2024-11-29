@@ -109,7 +109,9 @@ const crawler = new CheerioCrawler({
                     transformRequestFunction: (req) => {
                         // Pass the incremented depth to new requests
                         req.userData = { depth: currentDepth + 1 };
-                        domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1) + 1);
+                        if (request.url.match(/contact|about|email|mail|team|people/i)) {
+                            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1) + 1);
+                        }
                         return req;
                     }
                 });
