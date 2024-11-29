@@ -81,13 +81,13 @@ const crawler = new CheerioCrawler({
             }
 
             // Only enqueue new links if we haven't reached max depth
-            if (currentDepth < 3) {
+            if (currentDepth < input.maxDepth) {
                 let enqueuedCount = 0;
                 await enqueueLinks({
                     globs: ['**/*contact*', '**/*about*', '**/*team*'],
                     label: 'DETAIL',
                     transformRequestFunction: (req) => {
-                        if (enqueuedCount >= 5) {
+                        if (enqueuedCount >= input.maxSpray) {
                             return false;
                         }
                         const targetDomain = getDomain(req.url);
