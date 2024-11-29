@@ -8,7 +8,7 @@
       "editor": "stringList",
       "title": "List of Websites",
       "description": "Provide an array of websites to scrape for emails.",
-      "prefill": ["https://docs.apify.com/"]
+      "prefill": ["https://www.southampton.ac.uk/people"]
     },
     "removeDuplicateEmails": {
       "type": "boolean",
