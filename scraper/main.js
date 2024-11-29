@@ -26,9 +26,15 @@ const emailMap = new Map();
 
 const domainMap = new Map();
 
+// Add at the top with other Maps
+const visitedUrls = new Set();
+
 // Add each website to the request queue
 for (const website of websites) {
-    await requestQueue.addRequest({ url: website });
+    await requestQueue.addRequest({ 
+        url: website,
+        userData: { depth: 0 }  // Add initial depth
+    });
     console.debug(`Added to queue: ${website}`);
 }
 
@@ -38,7 +44,30 @@ const crawler = new CheerioCrawler({
     proxyConfiguration: await Actor.createProxyConfiguration(),
     async requestHandler({ request, $, enqueueLinks }) {
         try {
-            console.log(`Processing ${request.url}...`);
+            const currentDepth = request.userData?.depth || 0;
+            
+            // Normalize the URL (remove trailing slashes, etc)
+            const normalizedUrl = request.url.toLowerCase().replace(/\/$/, '');
+            if (visitedUrls.has(normalizedUrl)) {
+                console.debug(`Already visited ${request.url}, skipping.`);
+                return;
+            }
+            visitedUrls.add(normalizedUrl);
+
+            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 0) + 1);
+            // If the domain has been scraped maxScrapePerDomain times, skip it
+            if (domainMap.get(getBaseDomain(request.url)) >= input.maxScrapePerDomain) {
+                console.debug(`The domain has been scraped ${input.maxScrapePerDomain} times, skip it.`);
+                return;
+            }
+
+            // If we've reached max depth, don't enqueue more links
+            if (currentDepth >= input.maxDepth) {
+                console.debug(`Reached max depth of ${input.maxDepth}, won't enqueue more links.`);
+                return;
+            }
+
+            console.log(`Processing ${request.url}... (depth: ${currentDepth})`);
 
             // Look for email patterns on the page
             const emails = $.html().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
@@ -66,22 +95,23 @@ const crawler = new CheerioCrawler({
                 console.log(`No emails found on ${request.url}`);
             }
 
-            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 0) + 1);
-
-            if (domainMap.get(getBaseDomain(request.url)) < 10) {
-                await enqueueLinks({
-                    globs: [
-                        '**/*contact*/**',
-                        '**/*about*/**',
-                        '**/*team*/**',
-                        '**/*people*/**',
-                        '**/*email*/**',
-                        '**/*mail*/**'
-                    ],
-                    label: 'DETAIL',
-                    strategy: 'same-domain'
-                });
-            }
+            await enqueueLinks({
+                globs: [
+                    '**/*contact*/**',
+                    '**/*about*/**',
+                    '**/*team*/**',
+                    '**/*people*/**',
+                    '**/*email*/**',
+                    '**/*mail*/**'
+                ],
+                label: 'DETAIL',
+                strategy: 'same-domain',
+                transformRequestFunction: (req) => {
+                    // Pass the incremented depth to new requests
+                    req.userData = { depth: currentDepth + 1 };
+                    return req;
+                }
+            });
 
         } catch (error) {
             console.error(`Error processing ${request.url}: ${error.message}`);
