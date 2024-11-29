@@ -24,12 +24,11 @@ console.log('Request queue initialized');
 // Only used if remove duplicates option is selected
 const emailMap = new Map();
 
+const domainMap = new Map();
+
 // Add each website to the request queue
 for (const website of websites) {
-    await requestQueue.addRequest({ 
-        url: website,
-        userData: { depth: 0 } // Add initial depth for root URLs
-    });
+    await requestQueue.addRequest({ url: website });
     console.debug(`Added to queue: ${website}`);
 }
 
@@ -40,7 +39,6 @@ const crawler = new CheerioCrawler({
     async requestHandler({ request, $, enqueueLinks }) {
         try {
             console.log(`Processing ${request.url}...`);
-            const currentDepth = request.userData.depth || 0;
 
             // Look for email patterns on the page
             const emails = $.html().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
@@ -68,9 +66,9 @@ const crawler = new CheerioCrawler({
                 console.log(`No emails found on ${request.url}`);
             }
 
-            // Only enqueue new links if we haven't reached max depth
-            if (currentDepth < input.maxDepth) {
-                let enqueuedCount = 0;
+            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 0) + 1);
+
+            if (domainMap.get(getBaseDomain(request.url)) < 10) {
                 await enqueueLinks({
                     globs: [
                         '*contact*',
@@ -81,18 +79,7 @@ const crawler = new CheerioCrawler({
                         '*mail*'
                     ],
                     label: 'DETAIL',
-                    strategy: 'same-domain',
-                    transformRequestFunction: (req) => {
-                        console.debug(`Evaluating link: ${req.url}`);
-                        if (enqueuedCount >= input.maxSpray) {
-                            console.debug(`Skipping ${req.url} - reached max spray limit`);
-                            return false;
-                        }
-                        enqueuedCount++;
-                        req.userData = { depth: currentDepth + 1 };
-                        console.debug(`Enqueuing link (${enqueuedCount}/${input.maxSpray}): ${req.url}`);
-                        return req;
-                    },
+                    strategy: 'same-domain'
                 });
             }
 
@@ -111,3 +98,13 @@ await crawler.run();
 console.log('Crawler finished');
 
 await Actor.exit();
+
+// Utility function to get base domain from URL
+function getBaseDomain(url) {
+    try {
+        return (new URL(url)).hostname.replace('www.', '');
+    } catch (e) {
+        console.error(`Invalid URL: ${url}`);
+        return null;
+    }
+}

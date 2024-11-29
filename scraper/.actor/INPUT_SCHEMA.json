@@ -15,18 +15,6 @@
       "title": "Remove Duplicate Emails",
       "description": "If enabled, removes duplicate emails even if found on seaparate webpages. If disabled, outputs all found emails including duplicates.",
       "default": true
-    },
-    "maxDepth": {
-      "type": "integer",
-      "title": "Maximum Crawl Depth",
-      "description": "Maximum depth of pages to crawl from the starting URL. A depth of 0 means only the initial page, 1 means also crawl linked pages, etc.",
-      "default": 3
-    },
-    "maxSpray": {
-      "type": "integer",
-      "title": "Maximum Links per Page",
-      "description": "Maximum number of additional links to follow from each page.",
-      "default": 5
     }
   },
   "required": ["websites"]
