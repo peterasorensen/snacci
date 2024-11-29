@@ -54,7 +54,7 @@ const crawler = new CheerioCrawler({
             }
             visitedUrls.add(normalizedUrl);
 
-            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 0) + 1);
+            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1));
             // If the domain has been scraped maxScrapePerDomain times, skip it
             if (domainMap.get(getBaseDomain(request.url)) >= input.maxScrapePerDomain) {
                 console.debug(`The domain has been scraped ${input.maxScrapePerDomain} times, skip it.`);
@@ -110,6 +110,7 @@ const crawler = new CheerioCrawler({
                 transformRequestFunction: (req) => {
                     // Pass the incremented depth to new requests
                     req.userData = { depth: currentDepth + 1 };
+                    domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1) + 1);
                     return req;
                 }
             });
