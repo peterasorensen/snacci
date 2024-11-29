@@ -84,20 +84,34 @@ const crawler = new CheerioCrawler({
             if (currentDepth < input.maxDepth) {
                 let enqueuedCount = 0;
                 await enqueueLinks({
-                    globs: ['**/*contact*', '**/*about*', '**/*team*'],
+                    globs: [
+                        '**/*contact**',
+                        '**/*about**', 
+                        '**/*team**',
+                        '**/contact**',
+                        '**/about**',
+                        '**/team**',
+                        '**/contact',
+                        '**/about',
+                        '**/team',
+                        '**/people**'
+                    ],
                     label: 'DETAIL',
                     transformRequestFunction: (req) => {
+                        console.debug(`Evaluating link: ${req.url}`);
                         if (enqueuedCount >= input.maxSpray) {
+                            console.debug(`Skipping ${req.url} - reached max spray limit`);
                             return false;
                         }
                         const targetDomain = getDomain(req.url);
                         if (targetDomain === currentDomain) {
-                            console.debug(`Added to queue: ${website}`);
                             enqueuedCount++;
                             // Add depth information to the new request
                             req.userData = { depth: currentDepth + 1 };
+                            console.debug(`Enqueuing link (${enqueuedCount}/${input.maxSpray}): ${req.url}`);
                             return req;
                         }
+                        console.debug(`Skipping ${req.url} - different domain (${targetDomain} !== ${currentDomain})`);
                         return false; // Skip URLs from different domains
                     },
                 });
