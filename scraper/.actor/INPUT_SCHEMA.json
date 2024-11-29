@@ -26,8 +26,6 @@
       "type": "integer",
       "title": "Maximum Crawl Depth",
       "description": "Maximum depth of pages to crawl from the starting URL. A depth of 0 means only the initial page, 1 means also crawl linked pages, etc.",
-      "minimum": 0,
-      "maximum": 5,
       "default": 2
     }
   },
