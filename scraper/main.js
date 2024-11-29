@@ -71,12 +71,12 @@ const crawler = new CheerioCrawler({
             if (domainMap.get(getBaseDomain(request.url)) < 10) {
                 await enqueueLinks({
                     globs: [
-                        '*contact*',
-                        '*about*', 
-                        '*team*',
-                        '*people*',
-                        '*email*',
-                        '*mail*'
+                        '**/*contact*/**',
+                        '**/*about*/**',
+                        '**/*team*/**',
+                        '**/*people*/**',
+                        '**/*email*/**',
+                        '**/*mail*/**'
                     ],
                     label: 'DETAIL',
                     strategy: 'same-domain'
