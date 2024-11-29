@@ -54,13 +54,6 @@ const crawler = new CheerioCrawler({
             }
             visitedUrls.add(normalizedUrl);
 
-            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1));
-            // If the domain has been scraped maxScrapePerDomain times, skip it
-            if (domainMap.get(getBaseDomain(request.url)) >= input.maxScrapePerDomain) {
-                console.debug(`The domain has been scraped ${input.maxScrapePerDomain} times, skip it.`);
-                return;
-            }
-
             // If we've reached max depth, don't enqueue more links
             if (currentDepth >= input.maxDepth) {
                 console.debug(`Reached max depth of ${input.maxDepth}, won't enqueue more links.`);
@@ -95,25 +88,32 @@ const crawler = new CheerioCrawler({
                 console.log(`No emails found on ${request.url}`);
             }
 
-            await enqueueLinks({
-                globs: [
-                    '**/*contact*/**',
-                    '**/*about*/**',
-                    '**/*team*/**',
-                    '**/*people*/**',
-                    '**/*email*/**',
-                    '**/*mail*/**'
-                ],
-                label: 'DETAIL',
-                limit: input.maxLinksPerPage,
-                strategy: 'same-domain',
-                transformRequestFunction: (req) => {
-                    // Pass the incremented depth to new requests
-                    req.userData = { depth: currentDepth + 1 };
-                    domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1) + 1);
-                    return req;
-                }
-            });
+
+            domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1));
+            // If the domain has been scraped maxScrapePerDomain times, skip it
+            if (domainMap.get(getBaseDomain(request.url)) >= input.maxScrapePerDomain) {
+                console.debug(`The domain has been scraped ${input.maxScrapePerDomain} times, skip enqueuing more links.`);
+            } else {
+                await enqueueLinks({
+                    globs: [
+                        '**/*contact*/**',
+                        '**/*about*/**',
+                        '**/*team*/**',
+                        '**/*people*/**',
+                        '**/*email*/**',
+                        '**/*mail*/**'
+                    ],
+                    label: 'DETAIL',
+                    limit: input.maxLinksPerPage,
+                    strategy: 'same-domain',
+                    transformRequestFunction: (req) => {
+                        // Pass the incremented depth to new requests
+                        req.userData = { depth: currentDepth + 1 };
+                        domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1) + 1);
+                        return req;
+                    }
+                });
+            }
 
         } catch (error) {
             console.error(`Error processing ${request.url}: ${error.message}`);
