@@ -33,17 +33,6 @@ for (const website of websites) {
     console.debug(`Added to queue: ${website}`);
 }
 
-// Add this utility function at the top level
-function getDomain(url) {
-    try {
-        const urlObj = new URL(url);
-        return urlObj.hostname.toLowerCase();
-    } catch (e) {
-        console.error(`Invalid URL: ${url}`);
-        return null;
-    }
-}
-
 // Create a Cheerio-based crawler
 const crawler = new CheerioCrawler({
     requestQueue,
@@ -51,7 +40,6 @@ const crawler = new CheerioCrawler({
     async requestHandler({ request, $, enqueueLinks }) {
         try {
             console.log(`Processing ${request.url}...`);
-            const currentDomain = getDomain(request.url);
             const currentDepth = request.userData.depth || 0;
 
             // Look for email patterns on the page
@@ -85,34 +73,25 @@ const crawler = new CheerioCrawler({
                 let enqueuedCount = 0;
                 await enqueueLinks({
                     globs: [
-                        '**/*contact**',
-                        '**/*about**', 
-                        '**/*team**',
-                        '**/contact**',
-                        '**/about**',
-                        '**/team**',
-                        '**/contact',
-                        '**/about',
-                        '**/team',
-                        '**/people**'
+                        '*contact*',
+                        '*about*', 
+                        '*team*',
+                        '*people*',
+                        '*email*',
+                        '*mail*'
                     ],
                     label: 'DETAIL',
+                    strategy: 'same-domain',
                     transformRequestFunction: (req) => {
                         console.debug(`Evaluating link: ${req.url}`);
                         if (enqueuedCount >= input.maxSpray) {
                             console.debug(`Skipping ${req.url} - reached max spray limit`);
                             return false;
                         }
-                        const targetDomain = getDomain(req.url);
-                        if (targetDomain === currentDomain) {
-                            enqueuedCount++;
-                            // Add depth information to the new request
-                            req.userData = { depth: currentDepth + 1 };
-                            console.debug(`Enqueuing link (${enqueuedCount}/${input.maxSpray}): ${req.url}`);
-                            return req;
-                        }
-                        console.debug(`Skipping ${req.url} - different domain (${targetDomain} !== ${currentDomain})`);
-                        return false; // Skip URLs from different domains
+                        enqueuedCount++;
+                        req.userData = { depth: currentDepth + 1 };
+                        console.debug(`Enqueuing link (${enqueuedCount}/${input.maxSpray}): ${req.url}`);
+                        return req;
                     },
                 });
             }
