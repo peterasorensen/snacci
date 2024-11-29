@@ -26,8 +26,22 @@ const emailMap = new Map();
 
 // Add each website to the request queue
 for (const website of websites) {
-    await requestQueue.addRequest({ url: website });
+    await requestQueue.addRequest({ 
+        url: website,
+        userData: { depth: 0 } // Add initial depth for root URLs
+    });
     console.debug(`Added to queue: ${website}`);
+}
+
+// Add this utility function at the top level
+function getDomain(url) {
+    try {
+        const urlObj = new URL(url);
+        return urlObj.hostname.toLowerCase();
+    } catch (e) {
+        console.error(`Invalid URL: ${url}`);
+        return null;
+    }
 }
 
 // Create a Cheerio-based crawler
@@ -37,6 +51,8 @@ const crawler = new CheerioCrawler({
     async requestHandler({ request, $, enqueueLinks }) {
         try {
             console.log(`Processing ${request.url}...`);
+            const currentDomain = getDomain(request.url);
+            const currentDepth = request.userData.depth || 0;
 
             // Look for email patterns on the page
             const emails = $.html().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
@@ -64,11 +80,27 @@ const crawler = new CheerioCrawler({
                 console.log(`No emails found on ${request.url}`);
             }
 
-            // Find and add links to pages like "contact", "about", or "team"
-            await enqueueLinks({
-                globs: ['**/*contact*', '**/*about*', '**/*team*'],
-                label: 'DETAIL',
-            });
+            // Only enqueue new links if we haven't reached max depth
+            if (currentDepth < 3) {
+                let enqueuedCount = 0;
+                await enqueueLinks({
+                    globs: ['**/*contact*', '**/*about*', '**/*team*'],
+                    label: 'DETAIL',
+                    transformRequestFunction: (req) => {
+                        if (enqueuedCount >= 5) {
+                            return false;
+                        }
+                        const targetDomain = getDomain(req.url);
+                        if (targetDomain === currentDomain) {
+                            enqueuedCount++;
+                            // Add depth information to the new request
+                            req.userData = { depth: currentDepth + 1 };
+                            return req;
+                        }
+                        return false; // Skip URLs from different domains
+                    },
+                });
+            }
 
         } catch (error) {
             console.error(`Error processing ${request.url}: ${error.message}`);
