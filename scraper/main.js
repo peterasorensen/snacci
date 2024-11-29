@@ -92,6 +92,7 @@ const crawler = new CheerioCrawler({
                         }
                         const targetDomain = getDomain(req.url);
                         if (targetDomain === currentDomain) {
+                            console.debug(`Added to queue: ${website}`);
                             enqueuedCount++;
                             // Add depth information to the new request
                             req.userData = { depth: currentDepth + 1 };
