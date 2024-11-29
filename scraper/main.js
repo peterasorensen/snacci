@@ -105,6 +105,7 @@ const crawler = new CheerioCrawler({
                     '**/*mail*/**'
                 ],
                 label: 'DETAIL',
+                limit: input.maxLinksPerPage,
                 strategy: 'same-domain',
                 transformRequestFunction: (req) => {
                     // Pass the incremented depth to new requests
