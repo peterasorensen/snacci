@@ -2,6 +2,14 @@
 
 The Deep Email Web Scraper is a powerful Apify actor designed to extract email addresses from a list of websites efficiently and comprehensively. This tool crawls not only the main pages but also intelligently navigates to relevant subpages like "contact," "about," and "team" to maximize email discovery.
 
+##### Update 2025-02-08 (v1.1)
+- Fixed an issue during link enqueueing using regex patterns to improve finding contact pages.
+- Now parsing raw direct HTML body instead of Cheerio processed HTML to improve email detection.
+
+(If you've used the tool before, give it another try!)
+
+___
+
 ## Key Features:
 
 1. **Bulk Website Processing**: Scrape multiple websites in a single run by providing a list of URLs.
