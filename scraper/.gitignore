@@ -1,3 +1,8 @@
 node_modules/
 package-lock.json
 storage/
+
+# Added by Apify CLI
+storage
+node_modules
+.venv

@@ -42,7 +42,12 @@ for (const website of websites) {
 const crawler = new CheerioCrawler({
     requestQueue,
     proxyConfiguration: await Actor.createProxyConfiguration(),
-    async requestHandler({ request, $, enqueueLinks }) {
+    maxRequestRetries: 2,
+    requestHandlerTimeoutSecs: 30,
+    maxConcurrency: 5,
+    navigationTimeoutSecs: 30,
+    requestHandler: async ({ request, response, body, $, enqueueLinks }) => {
+        await new Promise(resolve => setTimeout(resolve, 1000));
         try {
             const currentDepth = request.userData?.depth || 0;
             
@@ -64,6 +69,10 @@ const crawler = new CheerioCrawler({
 
             // Look for email patterns on the page
             const emails = $.html().match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+
+            // Look for email patterns in the raw HTML body instead of Cheerio's processed HTML
+            const emailsFromBody = body.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+            emails.push(...emailsFromBody);
 
             // Extract emails from custom attributes
             $('a[data-mail-name][data-mail-host]').each((index, element) => {
@@ -88,20 +97,14 @@ const crawler = new CheerioCrawler({
                 console.log(`No emails found on ${request.url}`);
             }
 
-
             domainMap.set(getBaseDomain(request.url), (domainMap.get(getBaseDomain(request.url)) || 1));
             // If the domain has been scraped maxScrapePerDomain times, skip it
             if (domainMap.get(getBaseDomain(request.url)) >= input.maxScrapePerDomain) {
                 console.debug(`The domain has been scraped ${input.maxScrapePerDomain} times, skip enqueuing more links.`);
             } else {
                 await enqueueLinks({
-                    globs: [
-                        '**/*contact*/**',
-                        '**/*about*/**',
-                        '**/*team*/**',
-                        '**/*people*/**',
-                        '**/*email*/**',
-                        '**/*mail*/**'
+                    regexps: [
+                        /.*(contact|about|team|people|email|mail).*/i
                     ],
                     label: 'DETAIL',
                     limit: input.maxLinksPerPage,
@@ -119,10 +122,12 @@ const crawler = new CheerioCrawler({
 
         } catch (error) {
             console.error(`Error processing ${request.url}: ${error.message}`);
+            await requestQueue.markRequestHandled(request);
         }
     },
     failedRequestHandler({ request, error }) {
         console.error(`Request failed for ${request.url}: ${error.message}`);
+        requestQueue.markRequestHandled(request);
     },
 });
 

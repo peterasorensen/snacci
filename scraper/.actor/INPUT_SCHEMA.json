@@ -19,13 +19,13 @@
     "maxScrapePerDomain": {
       "type": "integer",
       "title": "Maximum Pages per Domain",
-      "description": "Maximum number of pages to scrape from each domain.",
+      "description": "Maximum number of pages to scrape from each domain. If unsure, leave at default.",
       "default": 20
     },
     "maxDepth": {
       "type": "integer",
       "title": "Maximum Crawl Depth",
-      "description": "Maximum depth of pages to crawl from the starting URL. A depth of 0 means only the initial page, 1 means also crawl linked pages, etc.",
+      "description": "Maximum depth of pages to crawl from the starting URL. A depth of 0 means only the initial page, 1 means also crawl linked pages, 2 means crawl linked pages and their linked pages, etc.",
       "default": 2
     }
   },
